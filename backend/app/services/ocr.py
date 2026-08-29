@@ -9,7 +9,7 @@ def extract_text_from_bytes(file_bytes, filename):
     Send file to OCR.space API and return extracted text
     """
     try:
-        api_key = os.getenv("OCR_API_KEY", "K86874813188957")  # Free demo key, replace with your own
+        api_key = os.getenv("OCR_API_KEY", "K84064978688957")  # Free demo key, replace with your own
         url = "https://api.ocr.space/parse/image"
 
         # Determine file type

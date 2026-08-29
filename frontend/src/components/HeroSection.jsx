@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Upload, FileText, GitBranch, Shield, Bot, Landmark, ArrowRight, Building2, MapPin, Calendar, User, CheckCircle, TrendingUp, Award } from 'lucide-react';
 import AIAssistant from './AIAssistant';
 import UploadSection from './UploadSection';
+import toast from 'react-hot-toast';
 
 function HeroSection({ onUpload }) {
   const [showAI, setShowAI] = useState(false);

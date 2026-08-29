@@ -8,7 +8,7 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      - DATABASE_URL=postgresql://user:pass@db:5432/land_db
+      - DATABASE_URL=${DATABASE_URL}
       - NEO4J_URI=bolt://neo4j:7687
     depends_on:
       - db

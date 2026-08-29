@@ -13,7 +13,7 @@ from .services.graph import build_ownership_graph, add_ownership_relationship
 from .services.ec_verification import verify_with_ec
 from .models.schemas import DocumentResponse, Entities, GraphResponse
 
-# ====== CREATE THE APP (THIS WAS MISSING) ======
+# ====== CREATE THE APP ======
 app = FastAPI(
     title="Land Document Intelligence System",
     description="AI-powered system for land record digitization and ownership verification",
@@ -34,10 +34,17 @@ UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs("temp", exist_ok=True)
 
+# ====== HEALTH CHECK ENDPOINT ======
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "Land Document Intelligence System"}
+
+# ====== ROOT ENDPOINT ======
 @app.get("/")
 async def root():
     return {"message": "Land Document Intelligence System API", "status": "running"}
 
+# ====== UPLOAD ENDPOINT ======
 @app.post("/upload/")
 async def upload_document(file: UploadFile = File(...)):
     """
@@ -88,6 +95,7 @@ async def upload_document(file: UploadFile = File(...)):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
+# ====== MULTIPLE UPLOAD ENDPOINT ======
 @app.post("/upload-multiple/")
 async def upload_multiple_documents(files: List[UploadFile] = File(...)):
     """
@@ -102,6 +110,7 @@ async def upload_multiple_documents(files: List[UploadFile] = File(...)):
         })
     return {"results": results}
 
+# ====== GRAPH ENDPOINT ======
 @app.get("/graph/{deed_id}")
 async def get_ownership_graph(deed_id: str):
     """
@@ -124,6 +133,7 @@ async def get_ownership_graph(deed_id: str):
         }
     }
 
+# ====== EC VERIFICATION ENDPOINT ======
 @app.post("/verify-ec/")
 async def verify_ec(document_id: str, ec_number: str):
     """
@@ -137,5 +147,6 @@ async def verify_ec(document_id: str, ec_number: str):
         "flags": []
     }
 
+# ====== RUN SERVER ======
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

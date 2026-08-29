@@ -6,7 +6,7 @@ services:
     plan: free
     rootDir: backend
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /
+    healthCheckPath: /docs
     envVars:
       - key: DATABASE_URL
         value: postgresql://land_document_db_user:uy2rp95mZF7vpPJOy2LKXcILnlZ2fGdc@dpg-da989sks728c73d1ejj0-a/land_document_db
@@ -16,3 +16,15 @@ services:
         value: neo4j
       - key: NEO4J_PASSWORD
         value: password
+
+  - type: web
+    name: land-document-frontend
+    env: docker
+    region: oregon
+    plan: free
+    rootDir: frontend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://land-document-backend.onrender.com

@@ -11,7 +11,7 @@ from .services.nlp import extract_entities, extract_land_entities
 from .services.matching import fuzzy_match_names
 from .services.graph import build_ownership_graph, add_ownership_relationship
 from .services.ec_verification import verify_with_ec
-from .models.schemas import DocumentResponse, EntityResponse, GraphResponse
+from .models.schemas import DocumentResponse, Entities, GraphResponse
 
 app = FastAPI(
     title="Land Document Intelligence System",

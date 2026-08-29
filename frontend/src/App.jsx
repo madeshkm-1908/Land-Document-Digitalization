@@ -6,25 +6,23 @@ import HeroSection from './components/HeroSection';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [fileData, setFileData] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
 
   const handleUpload = (data) => {
+    console.log('Upload complete:', data);
     setFileData(data);
+    // Show extracted data
+    if (data && data.entities) {
+      toast.success('Document processed! Check the extracted data.');
+    }
   };
 
   return (
     <>
-      <Toaster position="top-right" toastOptions={{
-        style: {
-          background: '#1a1a3e',
-          color: '#fff',
-          border: '1px solid #764ba2'
-        }
-      }} />
+      <Toaster position="top-right" />
       {!isLoggedIn ? (
         <Login onLogin={handleLogin} />
       ) : (

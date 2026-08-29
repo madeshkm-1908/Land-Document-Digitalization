@@ -6,7 +6,7 @@ services:
     plan: free
     rootDir: backend
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /
+    healthCheckPath: /docs
     envVars:
       - key: DATABASE_URL
         sync: false

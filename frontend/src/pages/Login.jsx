@@ -43,7 +43,7 @@ function Login({ onLogin }) {
   };
 
   return (
-    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+    <GoogleOAuthProvider clientId="799687207111-2an3bo27tfgnc3ptuc3ptmotbk4hjttp.apps.googleusercontent.com">
       <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style={{
         background: 'linear-gradient(135deg, #0c0c1e 0%, #1a1a3e 30%, #2d1b69 60%, #764ba2 100%)'
       }}>

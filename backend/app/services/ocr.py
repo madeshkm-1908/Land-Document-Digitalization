@@ -1,104 +1,60 @@
-import pytesseract
-from PIL import Image
-import cv2
-import numpy as np
+import requests
+import base64
 import os
+from PIL import Image
 import io
-from pdf2image import convert_from_bytes
-from ..config import settings
-
-def preprocess_image(image_path):
-    """
-    Preprocess image for better OCR accuracy
-    """
-    try:
-        img = cv2.imread(image_path)
-        if img is None:
-            print(f"Warning: Could not read image at {image_path}")
-            return None
-        
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-        denoised = cv2.fastNlMeansDenoising(thresh, None, 30, 7, 21)
-        
-        processed_path = image_path.replace(".", "_processed.")
-        cv2.imwrite(processed_path, denoised)
-        return processed_path
-    except Exception as e:
-        print(f"Preprocessing error: {e}")
-        return None
-
-def extract_text_from_image(image):
-    """
-    Extract text from PIL Image using Tesseract OCR
-    """
-    try:
-        custom_config = r'--oem 3 --psm 6 -l eng+hin'
-        text = pytesseract.image_to_string(image, config=custom_config)
-        return text.strip()
-    except Exception as e:
-        print(f"OCR Error: {e}")
-        return ""
-
-def extract_text_from_pdf(pdf_bytes):
-    """
-    Convert PDF to images and extract text from all pages
-    """
-    try:
-        images = convert_from_bytes(pdf_bytes, dpi=200)
-        all_text = ""
-        for i, image in enumerate(images):
-            text = extract_text_from_image(image)
-            all_text += f"\n--- Page {i+1} ---\n{text}"
-        return all_text.strip()
-    except Exception as e:
-        print(f"PDF OCR Error: {e}")
-        return ""
-
-def extract_text(file_path):
-    """
-    Extract text from file (supports images and PDFs)
-    """
-    try:
-        # Check if it's a PDF
-        if file_path.lower().endswith('.pdf'):
-            with open(file_path, 'rb') as f:
-                pdf_bytes = f.read()
-            return extract_text_from_pdf(pdf_bytes)
-        
-        # Handle images
-        image = Image.open(file_path)
-        return extract_text_from_image(image)
-    
-    except Exception as e:
-        print(f"Extract text error: {e}")
-        return ""
 
 def extract_text_from_bytes(file_bytes, filename):
     """
-    Extract text from bytes (for direct upload processing)
+    Send file to OCR.space API and return extracted text
     """
     try:
-        # Handle PDF
-        if filename.lower().endswith('.pdf'):
-            return extract_text_from_pdf(file_bytes)
-        
-        # Handle images
-        image = Image.open(io.BytesIO(file_bytes))
-        return extract_text_from_image(image)
-    
+        api_key = os.getenv("OCR_API_KEY", "K86874813188957")  # Free demo key, replace with your own
+        url = "https://api.ocr.space/parse/image"
+
+        # Determine file type
+        file_type = "PDF" if filename.lower().endswith('.pdf') else "JPG"
+
+        # Encode file to base64
+        base64_image = base64.b64encode(file_bytes).decode('utf-8')
+
+        payload = {
+            "apikey": api_key,
+            "language": "eng",
+            "isOverlayRequired": False,
+            "filetype": file_type,
+            "base64Image": f"data:image/jpeg;base64,{base64_image}"
+        }
+
+        print(f"Sending request to OCR.space for: {filename}")
+        response = requests.post(url, data=payload, timeout=30)
+        result = response.json()
+
+        if result.get("IsErroredOnProcessing"):
+            error_msg = result.get("ErrorMessage", "Unknown error")
+            print(f"OCR Error: {error_msg}")
+            return ""
+
+        parsed_text = ""
+        for page in result.get("ParsedResults", []):
+            parsed_text += page.get("ParsedText", "") + "\n"
+
+        return parsed_text.strip()
+
     except Exception as e:
-        print(f"Bytes OCR Error: {e}")
+        print(f"OCR API Error: {e}")
         return ""
 
-def extract_table_text(image_path):
-    """
-    Extract table-formatted text
-    """
+def extract_text(file_path):
+    """Fallback: read file and call extract_text_from_bytes"""
     try:
-        custom_config = r'--oem 3 --psm 11 -l eng'
-        text = pytesseract.image_to_string(Image.open(image_path), config=custom_config)
-        return text.strip()
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
+        return extract_text_from_bytes(file_bytes, os.path.basename(file_path))
     except Exception as e:
-        print(f"Table OCR Error: {e}")
+        print(f"Error reading file: {e}")
         return ""
+
+def preprocess_image(image_path):
+    """Placeholder for preprocessing"""
+    return None

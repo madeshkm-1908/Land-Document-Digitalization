@@ -11,15 +11,17 @@ RUN apt-get update && apt-get install -y \
     tesseract-ocr-hin \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
+# Copy requirements from backend folder
 COPY backend/requirements.txt .
+
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install spaCy model
+# Download spaCy model
 RUN python -m spacy download en_core_web_sm
 
-# Copy application code
-COPY . .
+# Copy all backend code
+COPY backend/ .
 
 EXPOSE 8000
 

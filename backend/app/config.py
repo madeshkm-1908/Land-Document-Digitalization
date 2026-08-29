@@ -5,7 +5,7 @@ load_dotenv()
 
 class Settings:
     # Database
-    DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/land_db")
+    DATABASE_URL = os.getenv("DATABASE_URL")
     
     # Neo4j
     NEO4J_URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")

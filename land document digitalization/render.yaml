@@ -9,19 +9,10 @@ services:
     healthCheckPath: /
     envVars:
       - key: DATABASE_URL
-        value: postgresql://user:pass@localhost:5432/land_db
+        value: postgresql://land_document_db_user:XXXXXXXXXX@dpg-XXXXXXX.oregon-postgres.render.com/land_document_db
       - key: NEO4J_URI
         value: bolt://localhost:7687
       - key: NEO4J_USER
         value: neo4j
       - key: NEO4J_PASSWORD
         value: password
-
-  - type: web
-    name: land-document-frontend
-    env: docker
-    region: oregon
-    plan: free
-    rootDir: frontend
-    dockerfilePath: ./Dockerfile
-    healthCheckPath: /

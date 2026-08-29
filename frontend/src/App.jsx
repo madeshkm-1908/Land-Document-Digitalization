@@ -18,7 +18,13 @@ function App() {
 
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster position="top-right" toastOptions={{
+        style: {
+          background: '#1a1a3e',
+          color: '#fff',
+          border: '1px solid #764ba2'
+        }
+      }} />
       {!isLoggedIn ? (
         <Login onLogin={handleLogin} />
       ) : (

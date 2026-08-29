@@ -9,7 +9,7 @@ services:
     healthCheckPath: /
     envVars:
       - key: DATABASE_URL
-        value: postgresql://user:pass@localhost:5432/land_db
+        sync: false
       - key: NEO4J_URI
         value: bolt://localhost:7687
       - key: NEO4J_USER
@@ -25,3 +25,8 @@ services:
     rootDir: frontend
     dockerfilePath: ./Dockerfile
     healthCheckPath: /
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://land-document-backend.onrender.com
+      - key: PORT
+        value: 80

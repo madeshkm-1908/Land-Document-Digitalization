@@ -2,27 +2,22 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install system dependencies for OCR and PDFs
+# Minimal system dependencies (only what's needed for OCR)
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
-    libtesseract-dev \
-    libleptonica-dev \
     tesseract-ocr-eng \
     tesseract-ocr-hin \
     poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
+# Copy requirements and install Python deps
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Download spaCy model (pre-load to save time)
-RUN python -m spacy download en_core_web_sm
-
-# Copy application code
+# Copy code
 COPY . .
 
 EXPOSE 8000
 
-# Use workers=1 to reduce memory and startup time
+# Start uvicorn with only 1 worker (low memory)
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
